@@ -18,5 +18,82 @@
    
 <img src="Audi-RS4-Limi-Philip-Kaess-1-von-14.jpg" alt="W3Schools.com" width="303.5" height="231">
 
+<canvas id="triangle-canvas"></canvas>
+
+<script>
+  // Get the canvas element
+  var canvas = document.getElementById("triangle-canvas");
+
+  // Initialize the WebGL context
+  var gl = canvas.getContext("webgl");
+
+  // Define the vertices of the triangle
+  var vertices = [
+    -0.5, 0.5, 0.0,  // Top vertex
+    0.5, 0.5, 0.0,   // Right vertex
+    0.0, -0.5, 0.0   // Bottom vertex
+  ];
+
+  // Create a buffer to store the vertices
+  var vertexBuffer = gl.createBuffer();
+
+  // Bind the buffer to the ARRAY_BUFFER target
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+
+  // Send the vertices to the buffer
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+  // Define the vertex shader
+  var vertexShader = `
+    attribute vec3 aVertexPosition;
+
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
+    void main() {
+      gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
+    }
+  `;
+
+  // Compile the vertex shader
+  var vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(vertexShaderObject, vertexShader);
+  gl.compileShader(vertexShaderObject);
+
+  // Define the fragment shader
+  var fragmentShader = `
+    void main() {
+      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+  `;
+
+  // Compile the fragment shader
+  var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(fragmentShaderObject, fragmentShader);
+  gl.compileShader(fragmentShaderObject);
+
+  // Create a program and attach the shaders
+  var program = gl.createProgram();
+  gl.attachShader(program, vertexShaderObject);
+  gl.attachShader(program, fragmentShaderObject);
+  gl.linkProgram(program);
+
+  // Use the program
+  gl.useProgram(program);
+
+  // Get the location of the aVertexPosition attribute
+  var vertexPosition = gl.getAttribLocation(program, "aVertexPosition");
+
+  // Enable the attribute
+  gl.enableVertexAttribArray(vertexPosition);
+
+  // Bind the buffer to the attribute
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0);
+
+  // Define the projection matrix
+  var projectionMatrix = mat4.create();
+  mat4.perspective(  
+  
 </body>
 </html>
