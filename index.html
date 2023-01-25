@@ -18,82 +18,47 @@
    
 <img src="Audi-RS4-Limi-Philip-Kaess-1-von-14.jpg" alt="W3Schools.com" width="303.5" height="231">
 
-<canvas id="triangle-canvas"></canvas>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r120/three.min.js"></script>
 <script>
-  // Get the canvas element
-  var canvas = document.getElementById("triangle-canvas");
+  // Create a scene
+  var scene = new THREE.Scene();
 
-  // Initialize the WebGL context
-  var gl = canvas.getContext("webgl");
+  // Create a camera
+  var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+
+  // Create a renderer
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
 
   // Define the vertices of the triangle
   var vertices = [
-    -0.5, 0.5, 0.0,  // Top vertex
-    0.5, 0.5, 0.0,   // Right vertex
-    0.0, -0.5, 0.0   // Bottom vertex
+    new THREE.Vector3(-0.5, 0.5, 0),
+    new THREE.Vector3(0.5, 0.5, 0),
+    new THREE.Vector3(0, -0.5, 0)
   ];
 
-  // Create a buffer to store the vertices
-  var vertexBuffer = gl.createBuffer();
+  // Create a geometry using the vertices
+  var geometry = new THREE.Geometry();
+  geometry.vertices = vertices;
 
-  // Bind the buffer to the ARRAY_BUFFER target
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  // Create a triangle face using the vertices
+  geometry.faces.push(new THREE.Face3(0, 1, 2));
 
-  // Send the vertices to the buffer
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  // Create a material
+  var material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 
-  // Define the vertex shader
-  var vertexShader = `
-    attribute vec3 aVertexPosition;
+  // Create a mesh using the geometry and material
+  var triangle = new THREE.Mesh(geometry, material);
 
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
+  // Add the triangle to the scene
+  scene.add(triangle);
 
-    void main() {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
-    }
-  `;
-
-  // Compile the vertex shader
-  var vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
-  gl.shaderSource(vertexShaderObject, vertexShader);
-  gl.compileShader(vertexShaderObject);
-
-  // Define the fragment shader
-  var fragmentShader = `
-    void main() {
-      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-    }
-  `;
-
-  // Compile the fragment shader
-  var fragmentShaderObject = gl.createShader(gl.FRAGMENT_SHADER);
-  gl.shaderSource(fragmentShaderObject, fragmentShader);
-  gl.compileShader(fragmentShaderObject);
-
-  // Create a program and attach the shaders
-  var program = gl.createProgram();
-  gl.attachShader(program, vertexShaderObject);
-  gl.attachShader(program, fragmentShaderObject);
-  gl.linkProgram(program);
-
-  // Use the program
-  gl.useProgram(program);
-
-  // Get the location of the aVertexPosition attribute
-  var vertexPosition = gl.getAttribLocation(program, "aVertexPosition");
-
-  // Enable the attribute
-  gl.enableVertexAttribArray(vertexPosition);
-
-  // Bind the buffer to the attribute
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  gl.vertexAttribPointer(vertexPosition, 3, gl.FLOAT, false, 0, 0);
-
-  // Define the projection matrix
-  var projectionMatrix = mat4.create();
-  mat4.perspective(  
+  // Render the scene
+  renderer.render(scene, camera);
+</script>
   
 </body>
 </html>
